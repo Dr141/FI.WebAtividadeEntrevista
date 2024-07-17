@@ -1,5 +1,4 @@
-﻿
-$(document).ready(function () {
+﻿$(document).ready(function () {
     if (obj) {
         $('#formCadastro #Nome').val(obj.Nome);
         $('#formCadastro #CEP').val(obj.CEP);
@@ -10,24 +9,29 @@ $(document).ready(function () {
         $('#formCadastro #Cidade').val(obj.Cidade);
         $('#formCadastro #Logradouro').val(obj.Logradouro);
         $('#formCadastro #Telefone').val(obj.Telefone);
+        $('#formCadastro #CPF').val(obj.CPF);
     }
 
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
-        
+        // Remover a máscara dos campos antes de enviar
+        var cpf = $('#CPF').cleanVal()
+        var telefone = $('#Telefone').cleanVal()
+        var cep = $('#CEP').cleanVal()
         $.ajax({
             url: urlPost,
             method: "POST",
             data: {
                 "NOME": $(this).find("#Nome").val(),
-                "CEP": $(this).find("#CEP").val(),
+                "CEP": cpf,
                 "Email": $(this).find("#Email").val(),
                 "Sobrenome": $(this).find("#Sobrenome").val(),
                 "Nacionalidade": $(this).find("#Nacionalidade").val(),
                 "Estado": $(this).find("#Estado").val(),
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
-                "Telefone": $(this).find("#Telefone").val()
+                "Telefone": telefone,
+                "CPF": cpf
             },
             error:
             function (r) {
@@ -44,6 +48,10 @@ $(document).ready(function () {
             }
         });
     })
+
+    $("#CPF").mask("999.999.999-99")
+    $("#CEP").mask("99999-999")
+    $("#Telefone").mask("(99) 9 9999-9999")
     
 })
 

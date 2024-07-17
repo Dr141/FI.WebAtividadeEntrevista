@@ -1,20 +1,24 @@
-﻿
-$(document).ready(function () {
+﻿$(document).ready(function () {
     $('#formCadastro').submit(function (e) {
         e.preventDefault();
+        // Remover a máscara dos campos antes de enviar
+        var cpf = $('#CPF').cleanVal()
+        var telefone = $('#Telefone').cleanVal()
+        var cep = $('#CEP').cleanVal()
         $.ajax({
             url: urlPost,
             method: "POST",
             data: {
                 "NOME": $(this).find("#Nome").val(),
-                "CEP": $(this).find("#CEP").val(),
+                "CEP": cep,
                 "Email": $(this).find("#Email").val(),
                 "Sobrenome": $(this).find("#Sobrenome").val(),
                 "Nacionalidade": $(this).find("#Nacionalidade").val(),
                 "Estado": $(this).find("#Estado").val(),
                 "Cidade": $(this).find("#Cidade").val(),
                 "Logradouro": $(this).find("#Logradouro").val(),
-                "Telefone": $(this).find("#Telefone").val()
+                "Telefone": telefone,
+                "CPF": cpf
             },
             error:
             function (r) {
@@ -30,8 +34,29 @@ $(document).ready(function () {
             }
         });
     })
-    
+    $("#CPF").mask("999.999.999-99")
+    $("#CEP").mask("99999-999")
+    $("#Telefone").mask("(99) 9 9999-9999")
 })
+//function FormatCpfFunction(element) {
+//    if (element.value.length > 0) {     
+//        element.value = element.value.replace(/\D/g, '')
+//        switch (element.value.length) {
+//            case 4:
+//                element.value = `${element.value.substring(0, 3)}.${element.value.substring(3, 4)}`
+//                break
+//            case 6:
+//                element.value = `${element.value.substring(0, 3)}.${element.value.substring(3, 6)}`
+//                break
+//            case 9:
+//                element.value = `${element.value.substring(0, 3)}.${element.value.substring(3, 6)}.${element.value.substring(6, 9)}`
+//                break
+//            case 11:
+//                element.value = `${element.value.substring(0, 3)}.${element.value.substring(3, 6)}.${element.value.substring(6, 9)}-${element.value.substring(9, 11)}`
+//                break
+//        }
+//    }    
+//}
 
 function ModalDialog(titulo, texto) {
     var random = Math.random().toString().replace('.', '');
