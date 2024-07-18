@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -59,6 +60,7 @@ namespace FI.AtividadeEntrevista.DAL
             {
                 adapter.Fill(ds);
             }
+            catch(Exception) { throw; }
             finally
             {
                 conexao.Close();
