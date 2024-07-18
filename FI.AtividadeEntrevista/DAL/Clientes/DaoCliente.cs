@@ -1,4 +1,5 @@
-﻿using FI.AtividadeEntrevista.DML;
+﻿using FI.AtividadeEntrevista.BLL;
+using FI.AtividadeEntrevista.DML;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -27,7 +28,7 @@ namespace FI.AtividadeEntrevista.DAL
             parametros.Add(new System.Data.SqlClient.SqlParameter("Logradouro", cliente.Logradouro));
             parametros.Add(new System.Data.SqlClient.SqlParameter("Email", cliente.Email));
             parametros.Add(new System.Data.SqlClient.SqlParameter("Telefone", cliente.Telefone));
-
+            parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", cliente.CPF));
             DataSet ds = base.Consultar("FI_SP_IncClienteV2", parametros);
             long ret = 0;
             if (ds.Tables[0].Rows.Count > 0)
@@ -117,7 +118,7 @@ namespace FI.AtividadeEntrevista.DAL
             parametros.Add(new System.Data.SqlClient.SqlParameter("Email", cliente.Email));
             parametros.Add(new System.Data.SqlClient.SqlParameter("Telefone", cliente.Telefone));
             parametros.Add(new System.Data.SqlClient.SqlParameter("ID", cliente.Id));
-
+            parametros.Add(new System.Data.SqlClient.SqlParameter("CPF", cliente.CPF));
             base.Executar("FI_SP_AltCliente", parametros);
         }
 
@@ -141,7 +142,7 @@ namespace FI.AtividadeEntrevista.DAL
             if (ds != null && ds.Tables != null && ds.Tables.Count > 0 && ds.Tables[0].Rows.Count > 0)
             {
                 foreach (DataRow row in ds.Tables[0].Rows)
-                {
+                {                    
                     DML.Cliente cli = new DML.Cliente();
                     cli.Id = row.Field<long>("Id");
                     cli.CEP = row.Field<string>("CEP");
@@ -153,11 +154,39 @@ namespace FI.AtividadeEntrevista.DAL
                     cli.Nome = row.Field<string>("Nome");
                     cli.Sobrenome = row.Field<string>("Sobrenome");
                     cli.Telefone = row.Field<string>("Telefone");
+                    cli.CPF = row.Field<string>("CPF");
+                    cli.Beneficiarios = ObterBeneficiarios(row.Field<long>("Id"));
                     lista.Add(cli);
                 }
             }
 
             return lista;
+        }
+
+        private List<Beneficiario> ObterBeneficiarios(long id)
+        {
+            List<System.Data.SqlClient.SqlParameter> parametros = new List<System.Data.SqlClient.SqlParameter>();
+            parametros.Add(new System.Data.SqlClient.SqlParameter("IDCLIENTE", id));
+            DataSet be = base.Consultar("FI_SP_ListBeneficiarios", parametros);
+
+            if (be != null && be.Tables != null && be.Tables.Count > 0 && be.Tables[0].Rows.Count > 0) 
+            {
+                List<Beneficiario> beneficiarios = new List<Beneficiario>();
+                foreach(DataRow row in be.Tables[0].Rows)
+                {
+                    beneficiarios.Add(new Beneficiario
+                    {
+                        Id = row.Field<long>("Id"),
+                        CPF = row.Field<string>("CPF"),
+                        Nome = row.Field<string>("Nome"),
+                        IdCliente = row.Field<long>("IdCliente")
+                    });
+                }
+
+                return beneficiarios;
+            }
+
+            return null;
         }
     }
 }
